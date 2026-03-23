@@ -112,7 +112,10 @@ class TaskListPanel(
         box.background = JBColor.PanelBackground
         box.isOpaque = false
 
-        // Left: filter comboBox
+        // Left: filter comboBox - use BorderLayout for vertical centering
+        val leftContainer = JPanel(BorderLayout())
+        leftContainer.background = JBColor.PanelBackground
+
         val leftContent = JPanel(FlowLayout(FlowLayout.LEFT, 5, 0))
         leftContent.background = JBColor.PanelBackground
         leftContent.add(JLabel("筛选: "))
@@ -125,14 +128,16 @@ class TaskListPanel(
             refresh()
         }
         leftContent.add(comboBox)
-        box.add(leftContent)
+
+        leftContainer.add(leftContent, BorderLayout.CENTER)
+        box.add(leftContainer)
 
         // Horizontal glue to push statistics to the right
         box.add(JBBox.createHorizontalGlue())
 
-        // Right: statistics
-        val rightContent = JPanel(FlowLayout(FlowLayout.CENTER, 0, 0))
-        rightContent.background = JBColor.PanelBackground
+        // Right: statistics - use BorderLayout.CENTER for vertical centering
+        val rightContainer = JPanel(BorderLayout())
+        rightContainer.background = JBColor.PanelBackground
 
         val todoCount = tasks.count { it.status == TaskStatus.TODO }
         val inProgressCount = tasks.count { it.status == TaskStatus.IN_PROGRESS }
@@ -143,9 +148,10 @@ class TaskListPanel(
                 "<span style='color:#4285F4;padding: 0 12px'>进行中: <b>$inProgressCount</b></span> | " +
                 "<span style='color:#34A853;padding: 0 12px'>完成: <b>$doneCount</b></span>" +
                 "</html>")
+        label.horizontalAlignment = JLabel.CENTER
 
-        rightContent.add(label)
-        box.add(rightContent)
+        rightContainer.add(label, BorderLayout.CENTER)
+        box.add(rightContainer)
 
         panel.add(box, BorderLayout.CENTER)
         return panel
