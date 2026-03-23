@@ -8,8 +8,10 @@ import com.intellij.ui.components.JBBox
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
+import java.awt.FlowLayout
 import javax.swing.BorderFactory
 import javax.swing.BoxLayout
+import javax.swing.JComboBox
 import javax.swing.JLabel
 import javax.swing.JPanel
 
@@ -19,6 +21,14 @@ class TaskListPanel(
 ) : JBBox(BoxLayout.Y_AXIS) {
 
     private val tasks = mutableListOf<Task>()
+    private var currentFilter: FilterOption = FilterOption.ALL
+
+    private enum class FilterOption(val displayName: String, val status: TaskStatus?) {
+        ALL("全部", null),
+        TODO("待办", TaskStatus.TODO),
+        IN_PROGRESS("进行中", TaskStatus.IN_PROGRESS),
+        DONE("完成", TaskStatus.DONE)
+    }
 
     init {
         border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
@@ -29,16 +39,23 @@ class TaskListPanel(
         tasks.clear()
         tasks.addAll(storage.loadTasks())
 
-        // Add status statistics bar at the top
-        add(createStatisticsBar())
+        // Top bar: left filter comboBox + right statistics
+        add(createTopBar())
         add(createSeparator())
 
-        for (task in tasks) {
+        val filteredTasks = if (currentFilter.status == null) {
+            tasks
+        } else {
+            tasks.filter { it.status == currentFilter.status }
+        }
+
+        for (task in filteredTasks) {
             val component = TaskItemComponent(
                 task = task,
                 onStatusChange = { updatedTask ->
                     storage.updateTask(updatedTask)
                     onTaskChanged()
+                    refresh()
                 },
                 onEdit = { existingTask ->
                     val window = this.topLevelAncestor
@@ -50,11 +67,13 @@ class TaskListPanel(
                         val editedTask = dialog.getResult()
                         storage.updateTask(editedTask)
                         onTaskChanged()
+                        refresh()
                     }
                 },
                 onDelete = { taskToDelete ->
                     storage.deleteTask(taskToDelete.id)
                     onTaskChanged()
+                    refresh()
                 }
             )
             add(component)
@@ -65,11 +84,29 @@ class TaskListPanel(
         repaint()
     }
 
-    private fun createStatisticsBar(): JPanel {
+    private fun createTopBar(): JPanel {
         val panel = JPanel(BorderLayout())
         panel.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
         panel.background = JBColor.PanelBackground
 
+        // Left: filter comboBox
+        val leftPanel = JPanel(FlowLayout(FlowLayout.LEFT, 5, 0))
+        leftPanel.background = JBColor.PanelBackground
+
+        leftPanel.add(JLabel("筛选: "))
+        val filterOptions = FilterOption.entries.toTypedArray()
+        val comboBox = JComboBox(filterOptions.map { it.displayName }.toTypedArray())
+        comboBox.selectedIndex = FilterOption.entries.indexOf(currentFilter)
+        comboBox.addActionListener {
+            val selectedIndex = comboBox.selectedIndex
+            currentFilter = FilterOption.entries[selectedIndex]
+            refresh()
+        }
+        leftPanel.add(comboBox)
+
+        panel.add(leftPanel, BorderLayout.WEST)
+
+        // Right: statistics
         val todoCount = tasks.count { it.status == TaskStatus.TODO }
         val inProgressCount = tasks.count { it.status == TaskStatus.IN_PROGRESS }
         val doneCount = tasks.count { it.status == TaskStatus.DONE }
@@ -77,9 +114,8 @@ class TaskListPanel(
         val label = JLabel("<html>" +
                 "<span style='color:#CCCCCC;padding: 0 12px'>待办: <b>$todoCount</b></span> | " +
                 "<span style='color:#4285F4;padding: 0 12px'>进行中: <b>$inProgressCount</b></span> | " +
-                "<span style='color:#34A853;padding: 0 12px'>已完成: <b>$doneCount</b></span>" +
+                "<span style='color:#34A853;padding: 0 12px'>完成: <b>$doneCount</b></span>" +
                 "</html>")
-        label.horizontalAlignment = JLabel.CENTER
 
         panel.add(label, BorderLayout.CENTER)
         return panel
