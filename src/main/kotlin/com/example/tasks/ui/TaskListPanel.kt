@@ -9,6 +9,8 @@ import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.FlowLayout
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
 import javax.swing.BorderFactory
 import javax.swing.BoxLayout
 import javax.swing.JComboBox
@@ -44,7 +46,7 @@ class TaskListPanel(
         // Sort by created time descending: newest tasks first at top
         tasks.sortByDescending { it.createdAt }
 
-        // Top bar: left filter comboBox + right statistics
+        // Top bar: left filter + right statistics
         add(createTopBar())
 
         // Add spacing between top bar and first task (same background color, no gray line)
@@ -106,32 +108,27 @@ class TaskListPanel(
      * 创建顶部栏：左筛选 + 右统计
      *
      * 布局逻辑：
-     * 1. 外层用 GridLayout(1, 2) → 强制分成左右两个格子，宽度各占 50%，高度完全相同
-     * 2. 每个格子内部结构完全对称，保证视觉对齐：
-     *    - 格子本身用 BorderLayout → CENTER 区域用来放内容盒子
-     *    - 内容盒子用 JBBox(Y_AXIS) 垂直排列 → 顶部放 vertical glue + 内容 + 底部 vertical glue
-     *    - vertical glue（胶水）会自动吸收多余空间，把内容"挤"到正中间，实现强制垂直居中
-     * 3. 水平方向：左边内容用 FlowLayout.CENTER → 文字和下拉框水平居中；右边统计文字也设置居中
+     * 1. 外层 GridLayout(1, 2) → 强制左右格子宽度相等，高度相同
+     * 2. 每个格子内部用 GridBagLayout → anchor=BASELINE 保证文字基线对齐
+     * 3. 水平方向都居中，所以"筛选"和"待办"两个词绝对在同一水平线上
      */
     private fun createTopBar(): JPanel {
-        // 外层面板：分成 1行2列，水平间距 10px，垂直间距 0
-        // GridLayout 会强制两个格子宽度、高度完全相等，这是保证左右对齐的关键
+        // 外层面板：分成 1行2列，水平间距 10px
+        // GridLayout 强制两个格子宽度、高度完全相等
         val panel = JPanel(java.awt.GridLayout(1, 2, 10, 0))
-        // 四周留 8px 内边距
         panel.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
         panel.background = JBColor.PanelBackground
 
         // ========== 左边格子：状态筛选下拉框 ==========
-        val leftCell = JPanel(BorderLayout())
+        val leftCell = JPanel(GridBagLayout())
         leftCell.background = JBColor.PanelBackground
 
-        // 垂直盒子 + 上下胶水 → 强制把内容挤到垂直中间
-        val leftBox = JBBox(BoxLayout.Y_AXIS)  // Y_AXIS = 垂直排列
-        leftBox.background = JBColor.PanelBackground
-        leftBox.isOpaque = false  // 不自己绘制背景，让父格子绘制
-        leftBox.add(JBBox.createVerticalGlue())  // 顶部胶水：吸收顶部多余空间
+        val gcLeft = GridBagConstraints()
+        // BASELINE 本身就是：水平居中 + 垂直基线对齐（正好就是我们要的）
+        gcLeft.anchor = GridBagConstraints.BASELINE
+        gcLeft.weightx = 1.0  // 水平方向占满格子，保证水平居中
+        gcLeft.weighty = 0.0  // 垂直方向只需要自己的高度，不要扩展
 
-        // 内容面板："筛选:" + 下拉框 → 水平并排，水平居中
         val leftContent = JPanel(FlowLayout(FlowLayout.CENTER, 5, 0))
         leftContent.background = JBColor.PanelBackground
         leftContent.add(JLabel("筛选: "))
@@ -145,22 +142,18 @@ class TaskListPanel(
         }
         leftContent.add(comboBox)
 
-        leftBox.add(leftContent)          // 中间放实际内容
-        leftBox.add(JBBox.createVerticalGlue())  // 底部胶水：吸收底部多余空间
-
-        // 把盒子放到格子的 CENTER 区域 → 盒子会自动居中
-        leftCell.add(leftBox, BorderLayout.CENTER)
+        leftCell.add(leftContent, gcLeft)
         panel.add(leftCell)
 
         // ========== 右边格子：任务统计信息 ==========
-        val rightCell = JPanel(BorderLayout())
+        val rightCell = JPanel(GridBagLayout())
         rightCell.background = JBColor.PanelBackground
 
-        // 和左边完全对称：同样用垂直盒子 + 上下胶水保证垂直居中
-        val rightBox = JBBox(BoxLayout.Y_AXIS)
-        rightBox.background = JBColor.PanelBackground
-        rightBox.isOpaque = false
-        rightBox.add(JBBox.createVerticalGlue())
+        val gcRight = GridBagConstraints()
+        // 同样：水平居中 + 垂直基线对齐
+        gcRight.anchor = GridBagConstraints.BASELINE
+        gcRight.weightx = 1.0  // 水平方向占满格子，保证水平居中
+        gcRight.weighty = 0.0  // 垂直方向只需要自己的高度，不要扩展
 
         // 计算各状态任务数量
         val todoCount = tasks.count { it.status == TaskStatus.TODO }
@@ -173,12 +166,9 @@ class TaskListPanel(
                 "<span style='color:#4285F4;padding: 0 12px'>进行中: <b>$inProgressCount</b></span> | " +
                 "<span style='color:#34A853;padding: 0 12px'>完成: <b>$doneCount</b></span>" +
                 "</html>")
-        label.horizontalAlignment = JLabel.CENTER  // 文字水平居中
+        label.horizontalAlignment = JLabel.CENTER
 
-        rightBox.add(label)
-        rightBox.add(JBBox.createVerticalGlue())
-
-        rightCell.add(rightBox, BorderLayout.CENTER)
+        rightCell.add(label, gcRight)
         panel.add(rightCell)
 
         return panel
