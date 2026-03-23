@@ -82,9 +82,9 @@ class TaskItemComponent(
 
     private fun getStatusText(): String {
         return when (task.status) {
-            TaskStatus.TODO -> "◻ ${task.status.displayName}"
-            TaskStatus.IN_PROGRESS -> "◐ ${task.status.displayName}"
-            TaskStatus.DONE -> "✓ ${task.status.displayName}"
+            TaskStatus.TODO -> task.status.displayName
+            TaskStatus.IN_PROGRESS -> task.status.displayName
+            TaskStatus.DONE -> task.status.displayName
         }
     }
 
