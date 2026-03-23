@@ -3,11 +3,13 @@ package com.example.tasks.ui
 import com.example.tasks.model.Task
 import com.example.tasks.model.TaskStatus
 import com.intellij.ui.JBColor
+import com.intellij.ui.components.JBBox
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.Font
 import javax.swing.BorderFactory
+import javax.swing.BoxLayout
 import javax.swing.JButton
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -24,11 +26,14 @@ class TaskItemComponent(
         minimumSize = Dimension(0, 60)
         maximumSize = Dimension(Int.MAX_VALUE, 60)
         border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        // Round border
+        background = com.intellij.ui.JBColor.PanelBackground
 
         // Status button
         val statusButton = JButton(getStatusText())
         statusButton.background = getStatusColor()
         statusButton.foreground = JBColor.WHITE
+        statusButton.preferredSize = Dimension(80, 48)
         statusButton.addActionListener {
             val newStatus = task.status.next()
             val updatedTask = task.copy(status = newStatus)
@@ -63,20 +68,25 @@ class TaskItemComponent(
 
         add(textPanel, BorderLayout.CENTER)
 
-        // Action buttons (edit and delete)
-        val actionsPanel = JPanel(FlowLayout(FlowLayout.RIGHT, 4, 0))
+        // Action buttons (edit and delete) - vertically centered
+        val actionsPanel = com.intellij.ui.components.JBBox(BoxLayout.VERTICAL)
+        actionsPanel.add(com.intellij.ui.components.JBBox.createVerticalGlue())
+        val buttonPanel = JPanel(java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 4, 0))
         val editButton = JButton("编辑")
         editButton.preferredSize = Dimension(50, 28)
         editButton.toolTipText = "编辑任务"
         editButton.addActionListener { onEdit(task) }
-        actionsPanel.add(editButton)
+        buttonPanel.add(editButton)
 
         val deleteButton = JButton("删除")
         deleteButton.preferredSize = Dimension(50, 28)
         deleteButton.toolTipText = "删除任务"
         deleteButton.addActionListener { onDelete(task) }
-        actionsPanel.add(deleteButton)
+        buttonPanel.add(deleteButton)
 
+        actionsPanel.add(buttonPanel)
+        actionsPanel.add(com.intellij.ui.components.JBBox.createVerticalGlue())
+        actionsPanel.preferredSize = Dimension(110, 0)
         add(actionsPanel, BorderLayout.EAST)
     }
 
