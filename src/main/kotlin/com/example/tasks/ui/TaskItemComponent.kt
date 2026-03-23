@@ -56,14 +56,12 @@ class TaskItemComponent(
 
         add(textPanel, BorderLayout.CENTER)
 
-        // Right: status button + edit + delete - all horizontal
+        // Right: status button + edit + delete - all horizontal, same style
         val buttonsPanel = JPanel(FlowLayout(FlowLayout.CENTER, 4, 0))
         val statusButton = JButton(getStatusText())
         statusButton.background = getStatusColor()
         statusButton.foreground = JBColor.WHITE
         statusButton.preferredSize = Dimension(70, 28)
-        statusButton.isBorderPainted = false
-        statusButton.isFocusPainted = false
         statusButton.addActionListener {
             val newStatus = task.status.next()
             val updatedTask = task.copy(status = newStatus)
