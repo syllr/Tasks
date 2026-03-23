@@ -112,6 +112,12 @@ class TaskListPanel(
         val leftCell = JPanel(BorderLayout())
         leftCell.background = JBColor.PanelBackground
 
+        // Use JBBox with vertical glue to force vertical center
+        val box = JBBox(BoxLayout.Y_AXIS)
+        box.background = JBColor.PanelBackground
+        box.isOpaque = false
+        box.add(JBBox.createVerticalGlue())
+
         val leftContent = JPanel(FlowLayout(FlowLayout.CENTER, 5, 0))
         leftContent.background = JBColor.PanelBackground
         leftContent.add(JLabel("筛选: "))
@@ -125,12 +131,21 @@ class TaskListPanel(
         }
         leftContent.add(comboBox)
 
-        leftCell.add(leftContent, BorderLayout.CENTER)
+        box.add(leftContent)
+        box.add(JBBox.createVerticalGlue())
+
+        leftCell.add(box, BorderLayout.CENTER)
         panel.add(leftCell)
 
         // Right cell: statistics - content centered both horizontally and vertically
         val rightCell = JPanel(BorderLayout())
         rightCell.background = JBColor.PanelBackground
+
+        // Use JBBox with vertical glue to force vertical center
+        val box = JBBox(BoxLayout.Y_AXIS)
+        box.background = JBColor.PanelBackground
+        box.isOpaque = false
+        box.add(JBBox.createVerticalGlue())
 
         val todoCount = tasks.count { it.status == TaskStatus.TODO }
         val inProgressCount = tasks.count { it.status == TaskStatus.IN_PROGRESS }
@@ -143,7 +158,10 @@ class TaskListPanel(
                 "</html>")
         label.horizontalAlignment = JLabel.CENTER
 
-        rightCell.add(label, BorderLayout.CENTER)
+        box.add(label)
+        box.add(JBBox.createVerticalGlue())
+
+        rightCell.add(box, BorderLayout.Center)
         panel.add(rightCell)
 
         return panel
