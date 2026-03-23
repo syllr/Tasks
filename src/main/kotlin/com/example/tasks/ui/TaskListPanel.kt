@@ -89,10 +89,9 @@ class TaskListPanel(
         val panel = JPanel(java.awt.GridLayout(1, 2, 10, 0))
         panel.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
         panel.background = JBColor.PanelBackground
-        panel.preferredSize = Dimension(0, 40)
 
         // Left: filter comboBox
-        val leftPanel = JPanel(FlowLayout(FlowLayout.LEFT, 5, 8))
+        val leftPanel = JPanel(FlowLayout(FlowLayout.LEFT, 5, 0))
         leftPanel.background = JBColor.PanelBackground
 
         leftPanel.add(JLabel("筛选: "))
@@ -109,7 +108,7 @@ class TaskListPanel(
         panel.add(leftPanel)
 
         // Right: statistics
-        val rightPanel = JPanel(FlowLayout(FlowLayout.CENTER, 0, 8))
+        val rightPanel = JPanel(FlowLayout(FlowLayout.CENTER, 0, 0))
         rightPanel.background = JBColor.PanelBackground
 
         val todoCount = tasks.count { it.status == TaskStatus.TODO }
