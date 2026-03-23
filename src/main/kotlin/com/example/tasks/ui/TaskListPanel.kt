@@ -103,20 +103,16 @@ class TaskListPanel(
     }
 
     private fun createTopBar(): JPanel {
-        // Use JBBox(X_AXIS) for guaranteed horizontal layout
-        val panel = JPanel(BorderLayout())
+        // GridLayout(1, 2) - split into two equal width cells
+        val panel = JPanel(java.awt.GridLayout(1, 2, 10, 0))
         panel.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
         panel.background = JBColor.PanelBackground
 
-        val box = JBBox(BoxLayout.X_AXIS)
-        box.background = JBColor.PanelBackground
-        box.isOpaque = false
+        // Left cell: filter comboBox - content centered both horizontally and vertically
+        val leftCell = JPanel(BorderLayout())
+        leftCell.background = JBColor.PanelBackground
 
-        // Left: filter comboBox - use BorderLayout for vertical centering
-        val leftContainer = JPanel(BorderLayout())
-        leftContainer.background = JBColor.PanelBackground
-
-        val leftContent = JPanel(FlowLayout(FlowLayout.LEFT, 5, 0))
+        val leftContent = JPanel(FlowLayout(FlowLayout.CENTER, 5, 0))
         leftContent.background = JBColor.PanelBackground
         leftContent.add(JLabel("筛选: "))
         val filterOptions = FilterOption.entries.toTypedArray()
@@ -129,15 +125,12 @@ class TaskListPanel(
         }
         leftContent.add(comboBox)
 
-        leftContainer.add(leftContent, BorderLayout.CENTER)
-        box.add(leftContainer)
+        leftCell.add(leftContent, BorderLayout.CENTER)
+        panel.add(leftCell)
 
-        // Horizontal glue to push statistics to the right
-        box.add(JBBox.createHorizontalGlue())
-
-        // Right: statistics - use BorderLayout.CENTER for vertical centering
-        val rightContainer = JPanel(BorderLayout())
-        rightContainer.background = JBColor.PanelBackground
+        // Right cell: statistics - content centered both horizontally and vertically
+        val rightCell = JPanel(BorderLayout())
+        rightCell.background = JBColor.PanelBackground
 
         val todoCount = tasks.count { it.status == TaskStatus.TODO }
         val inProgressCount = tasks.count { it.status == TaskStatus.IN_PROGRESS }
@@ -150,10 +143,9 @@ class TaskListPanel(
                 "</html>")
         label.horizontalAlignment = JLabel.CENTER
 
-        rightContainer.add(label, BorderLayout.CENTER)
-        box.add(rightContainer)
+        rightCell.add(label, BorderLayout.CENTER)
+        panel.add(rightCell)
 
-        panel.add(box, BorderLayout.CENTER)
         return panel
     }
 
