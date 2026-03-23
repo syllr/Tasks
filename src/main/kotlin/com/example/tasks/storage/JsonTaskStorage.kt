@@ -45,13 +45,13 @@ class JsonTaskStorage(private val project: Project) : TaskStorage {
             null
         }
 
-        // User-level storage: ~/.todoTasks/{project-name}.json
+        // User-level storage: ~/.todoTasks/tasks.json - all user-level tasks in one file
         val userHome = System.getProperty("user.home")
         val todoTasksDir = File(userHome, ".todoTasks")
         if (!todoTasksDir.exists()) {
             todoTasksDir.mkdirs()
         }
-        userStorageFile = File(todoTasksDir, "${projectName}.json")
+        userStorageFile = File(todoTasksDir, "tasks.json")
     }
 
     override fun loadTasks(): List<Task> {
