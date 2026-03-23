@@ -90,11 +90,13 @@ class TaskListPanel(
         panel.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
         panel.background = JBColor.PanelBackground
 
-        // Left: filter comboBox
-        val leftPanel = JPanel(FlowLayout(FlowLayout.LEFT, 5, 0))
+        // Left: filter comboBox - CENTER alignment for vertical centering
+        val leftPanel = JPanel(BorderLayout())
         leftPanel.background = JBColor.PanelBackground
 
-        leftPanel.add(JLabel("筛选: "))
+        val leftContent = JPanel(FlowLayout(FlowLayout.LEFT, 5, 0))
+        leftContent.background = JBColor.PanelBackground
+        leftContent.add(JLabel("筛选: "))
         val filterOptions = FilterOption.entries.toTypedArray()
         val comboBox = JComboBox(filterOptions.map { it.displayName }.toTypedArray())
         comboBox.selectedIndex = FilterOption.entries.indexOf(currentFilter)
@@ -103,12 +105,13 @@ class TaskListPanel(
             currentFilter = FilterOption.entries[selectedIndex]
             refresh()
         }
-        leftPanel.add(comboBox)
+        leftContent.add(comboBox)
 
+        leftPanel.add(leftContent, BorderLayout.CENTER)
         panel.add(leftPanel)
 
-        // Right: statistics
-        val rightPanel = JPanel(FlowLayout(FlowLayout.CENTER, 0, 0))
+        // Right: statistics - CENTER alignment for vertical centering
+        val rightPanel = JPanel(BorderLayout())
         rightPanel.background = JBColor.PanelBackground
 
         val todoCount = tasks.count { it.status == TaskStatus.TODO }
@@ -120,8 +123,9 @@ class TaskListPanel(
                 "<span style='color:#4285F4;padding: 0 12px'>进行中: <b>$inProgressCount</b></span> | " +
                 "<span style='color:#34A853;padding: 0 12px'>完成: <b>$doneCount</b></span>" +
                 "</html>")
+        label.horizontalAlignment = JLabel.CENTER
 
-        rightPanel.add(label)
+        rightPanel.add(label, BorderLayout.CENTER)
         panel.add(rightPanel)
 
         return panel
