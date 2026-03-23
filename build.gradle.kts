@@ -56,4 +56,9 @@ tasks {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
     }
+
+    // Disable buildSearchableOptions - not needed for this simple plugin
+    buildSearchableOptions {
+        enabled = false
+    }
 }
