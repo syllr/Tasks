@@ -34,7 +34,7 @@ intellijPlatform {
         version = project.version.toString()
         description = "Task management tool for IntelliJ IDEA"
         vendor {
-            name = "Your Name"
+            name = "shenyuanlaolarou"
         }
 
         ideaVersion {
