@@ -32,6 +32,8 @@ class TaskListPanel(
 
     init {
         border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        background = JBColor.PanelBackground
+        isOpaque = true
     }
 
     fun refresh() {
@@ -41,7 +43,12 @@ class TaskListPanel(
 
         // Top bar: left filter comboBox + right statistics
         add(createTopBar())
-        add(createSeparator())
+
+        // Add spacing between top bar and first task (same background color, no gray line)
+        val topSpacing = JPanel()
+        topSpacing.background = background
+        topSpacing.preferredSize = Dimension(0, 8)
+        add(topSpacing)
 
         val filteredTasks = if (currentFilter.status == null) {
             tasks
@@ -49,6 +56,7 @@ class TaskListPanel(
             tasks.filter { it.status == currentFilter.status }
         }
 
+        // Add tasks with spacing between them (each task has its own border)
         for (task in filteredTasks) {
             val component = TaskItemComponent(
                 task = task,
@@ -77,8 +85,15 @@ class TaskListPanel(
                 }
             )
             add(component)
-            add(createSeparator())
+            // Add some vertical spacing between task cards
+            val spacing = JPanel()
+            spacing.background = background
+            spacing.preferredSize = Dimension(0, 8)
+            add(spacing)
         }
+
+        // Add vertical glue to fill remaining empty space
+        add(JBBox.createVerticalGlue())
 
         revalidate()
         repaint()

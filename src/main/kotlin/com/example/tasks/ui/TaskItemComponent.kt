@@ -25,9 +25,13 @@ class TaskItemComponent(
         preferredSize = Dimension(0, 70)
         minimumSize = Dimension(0, 70)
         maximumSize = Dimension(Int.MAX_VALUE, 70)
-        border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        // Round border
+        // Compound border: rounded line border + inner padding
+        border = BorderFactory.createCompoundBorder(
+            com.intellij.ui.RoundedLineBorder(JBColor.GRAY, 5, 1),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        )
         background = com.intellij.ui.JBColor.PanelBackground
+        isOpaque = true
 
         // Left: title and description
         val textPanel = JPanel(BorderLayout())
