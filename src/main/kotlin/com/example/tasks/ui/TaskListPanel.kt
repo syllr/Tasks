@@ -85,16 +85,14 @@ class TaskListPanel(
     }
 
     private fun createTopBar(): JPanel {
-        val panel = JPanel(BorderLayout())
+        // Split into 1 row x 2 columns - guarantees they are side by side
+        val panel = JPanel(java.awt.GridLayout(1, 2, 10, 0))
         panel.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
         panel.background = JBColor.PanelBackground
         panel.preferredSize = Dimension(0, 40)
 
-        // Left: filter comboBox (use BorderLayout to force vertical center)
-        val leftContainer = JPanel(BorderLayout())
-        leftContainer.background = JBColor.PanelBackground
-
-        val leftPanel = JPanel(FlowLayout(FlowLayout.LEFT, 5, 0))
+        // Left: filter comboBox
+        val leftPanel = JPanel(FlowLayout(FlowLayout.LEFT, 5, 8))
         leftPanel.background = JBColor.PanelBackground
 
         leftPanel.add(JLabel("筛选: "))
@@ -108,12 +106,11 @@ class TaskListPanel(
         }
         leftPanel.add(comboBox)
 
-        leftContainer.add(leftPanel, BorderLayout.CENTER)
-        panel.add(leftContainer, BorderLayout.WEST)
+        panel.add(leftPanel)
 
-        // Right: statistics (also centered)
-        val rightContainer = JPanel(BorderLayout())
-        rightContainer.background = JBColor.PanelBackground
+        // Right: statistics
+        val rightPanel = JPanel(FlowLayout(FlowLayout.CENTER, 0, 8))
+        rightPanel.background = JBColor.PanelBackground
 
         val todoCount = tasks.count { it.status == TaskStatus.TODO }
         val inProgressCount = tasks.count { it.status == TaskStatus.IN_PROGRESS }
@@ -124,10 +121,10 @@ class TaskListPanel(
                 "<span style='color:#4285F4;padding: 0 12px'>进行中: <b>$inProgressCount</b></span> | " +
                 "<span style='color:#34A853;padding: 0 12px'>完成: <b>$doneCount</b></span>" +
                 "</html>")
-        label.horizontalAlignment = JLabel.CENTER
 
-        rightContainer.add(label, BorderLayout.CENTER)
-        panel.add(rightContainer, BorderLayout.CENTER)
+        rightPanel.add(label)
+        panel.add(rightPanel)
+
         return panel
     }
 
