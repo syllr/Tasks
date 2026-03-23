@@ -110,4 +110,18 @@ class AddTaskDialog(
     override fun getPreferredFocusedComponent(): JComponent {
         return titleField
     }
+
+    override fun doOKAction() {
+        val titleText = titleField.text.trim()
+        if (titleText.isEmpty()) {
+            // Show error message and keep dialog open
+            com.intellij.openapi.ui.Messages.showErrorDialog(
+                project,
+                "任务标题不能为空，请输入标题后再保存",
+                "输入错误"
+            )
+            return
+        }
+        super.doOKAction()
+    }
 }
