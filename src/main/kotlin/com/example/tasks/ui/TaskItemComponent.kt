@@ -65,14 +65,14 @@ class TaskItemComponent(
 
         // Action buttons (edit and delete)
         val actionsPanel = JPanel(FlowLayout(FlowLayout.RIGHT, 4, 0))
-        val editButton = JButton("✏")
-        editButton.preferredSize = Dimension(28, 28)
+        val editButton = JButton("编辑")
+        editButton.preferredSize = Dimension(50, 28)
         editButton.toolTipText = "编辑任务"
         editButton.addActionListener { onEdit(task) }
         actionsPanel.add(editButton)
 
-        val deleteButton = JButton("🗑")
-        deleteButton.preferredSize = Dimension(28, 28)
+        val deleteButton = JButton("删除")
+        deleteButton.preferredSize = Dimension(50, 28)
         deleteButton.toolTipText = "删除任务"
         deleteButton.addActionListener { onDelete(task) }
         actionsPanel.add(deleteButton)
