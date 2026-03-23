@@ -5,8 +5,11 @@ import com.example.tasks.model.TaskStatus
 import com.intellij.ui.JBColor
 import java.awt.BorderLayout
 import java.awt.Dimension
+import java.awt.FlowLayout
 import java.awt.Font
 import javax.swing.BorderFactory
+import javax.swing.Box
+import javax.swing.BoxLayout
 import javax.swing.JButton
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -65,10 +68,10 @@ class TaskItemComponent(
 
         add(textPanel, BorderLayout.CENTER)
 
-        // Action buttons (edit and delete) - vertically centered
-        // Outer BorderLayout fills full height, inner FlowLayout centers vertically by default
-        val actionsPanel = JPanel(BorderLayout())
-        val buttonPanel = JPanel(java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 4, 0))
+        // Action buttons (edit and delete) - vertically centered using standard Box
+        val actionsPanel = Box(BoxLayout.Y_AXIS)
+        actionsPanel.add(Box.createVerticalGlue())
+        val buttonPanel = JPanel(FlowLayout(FlowLayout.RIGHT, 4, 0))
         val editButton = JButton("编辑")
         editButton.preferredSize = Dimension(50, 28)
         editButton.toolTipText = "编辑任务"
@@ -81,7 +84,8 @@ class TaskItemComponent(
         deleteButton.addActionListener { onDelete(task) }
         buttonPanel.add(deleteButton)
 
-        actionsPanel.add(buttonPanel, BorderLayout.CENTER)
+        actionsPanel.add(buttonPanel)
+        actionsPanel.add(Box.createVerticalGlue())
         actionsPanel.preferredSize = Dimension(110, 0)
         add(actionsPanel, BorderLayout.EAST)
     }
