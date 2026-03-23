@@ -40,11 +40,17 @@ class TaskItemComponent(
         val textPanel = JPanel(BorderLayout())
         textPanel.border = BorderFactory.createEmptyBorder(0, 8, 0, 8)
 
-        val titleLabel = JLabel(task.title)
+        val titleText = buildString {
+            append(task.title)
+            if (!task.isProjectLevel) {
+                append(" <small>[用户]</small>")
+            }
+        }
+        val titleLabel = JLabel("<html>$titleText</html>")
         titleLabel.font = titleLabel.font.deriveFont(Font.BOLD)
         if (task.status == TaskStatus.DONE) {
             titleLabel.foreground = JBColor.GRAY
-            titleLabel.text = "<html><strike>${task.title}</strike></html>"
+            titleLabel.text = "<html><strike>$titleText</strike></html>"
         }
         textPanel.add(titleLabel, BorderLayout.NORTH)
 

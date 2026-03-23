@@ -8,5 +8,6 @@ data class Task(
     val description: String,
     val status: TaskStatus,
     val createdAt: Instant,
-    val updatedAt: Instant
+    val updatedAt: Instant,
+    val isProjectLevel: Boolean = true
 )

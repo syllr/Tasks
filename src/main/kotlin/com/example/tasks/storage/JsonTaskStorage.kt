@@ -19,49 +19,90 @@ private data class TaskJson(
     val description: String,
     val status: String,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val isProjectLevel: Boolean
 )
 
 class JsonTaskStorage(private val project: Project) : TaskStorage {
 
-    private val storageFile: File
+    private val projectStorageFile: File?
+    private val userStorageFile: File?
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     private var cachedTasks: MutableList<Task> = mutableListOf()
 
     init {
         val projectBasePath = project.basePath
-        if (projectBasePath != null) {
+        val projectName = project.name
+
+        // Project-level storage: .idea/tasks.json inside project
+        projectStorageFile = if (projectBasePath != null) {
             val ideaDir = File(projectBasePath, ".idea")
             if (!ideaDir.exists()) {
                 ideaDir.mkdirs()
             }
-            storageFile = File(ideaDir, "tasks.json")
+            File(ideaDir, "tasks.json")
         } else {
-            // Default to project root if basePath is null
-            storageFile = File(project.name + "-tasks.json")
+            null
         }
+
+        // User-level storage: ~/.todoTasks/{project-name}.json
+        val userHome = System.getProperty("user.home")
+        val todoTasksDir = File(userHome, ".todoTasks")
+        if (!todoTasksDir.exists()) {
+            todoTasksDir.mkdirs()
+        }
+        userStorageFile = File(todoTasksDir, "${projectName}.json")
     }
 
     override fun loadTasks(): List<Task> {
         cachedTasks = mutableListOf()
-        if (storageFile.exists()) {
-            try {
-                val json = storageFile.readText()
-                val data = gson.fromJson(json, StorageData::class.java)
-                cachedTasks = data.tasks.map { taskJson ->
-                    Task(
-                        id = taskJson.id,
-                        title = taskJson.title,
-                        description = taskJson.description,
-                        status = TaskStatus.valueOf(taskJson.status),
-                        createdAt = Instant.parse(taskJson.createdAt),
-                        updatedAt = Instant.parse(taskJson.updatedAt)
-                    )
-                }.toMutableList()
-            } catch (e: Exception) {
-                cachedTasks = mutableListOf()
+
+        // Load project-level tasks
+        projectStorageFile?.let { file ->
+            if (file.exists()) {
+                try {
+                    val json = file.readText()
+                    val data = gson.fromJson(json, StorageData::class.java)
+                    cachedTasks.addAll(data.tasks.map { taskJson ->
+                        Task(
+                            id = taskJson.id,
+                            title = taskJson.title,
+                            description = taskJson.description,
+                            status = TaskStatus.valueOf(taskJson.status),
+                            createdAt = Instant.parse(taskJson.createdAt),
+                            updatedAt = Instant.parse(taskJson.updatedAt),
+                            isProjectLevel = taskJson.isProjectLevel
+                        )
+                    })
+                } catch (e: Exception) {
+                    // Ignore errors
+                }
             }
         }
+
+        // Load user-level tasks
+        userStorageFile?.let { file ->
+            if (file.exists()) {
+                try {
+                    val json = file.readText()
+                    val data = gson.fromJson(json, StorageData::class.java)
+                    cachedTasks.addAll(data.tasks.map { taskJson ->
+                        Task(
+                            id = taskJson.id,
+                            title = taskJson.title,
+                            description = taskJson.description,
+                            status = TaskStatus.valueOf(taskJson.status),
+                            createdAt = Instant.parse(taskJson.createdAt),
+                            updatedAt = Instant.parse(taskJson.updatedAt),
+                            isProjectLevel = taskJson.isProjectLevel
+                        )
+                    })
+                } catch (e: Exception) {
+                    // Ignore errors
+                }
+            }
+        }
+
         return cachedTasks.toList()
     }
 
@@ -93,19 +134,44 @@ class JsonTaskStorage(private val project: Project) : TaskStorage {
     }
 
     private fun doSave() {
-        val data = StorageData(
-            version = 1,
-            tasks = cachedTasks.map { task ->
-                TaskJson(
-                    id = task.id,
-                    title = task.title,
-                    description = task.description,
-                    status = task.status.name,
-                    createdAt = task.createdAt.toString(),
-                    updatedAt = task.updatedAt.toString()
-                )
-            }
-        )
-        storageFile.writeText(gson.toJson(data))
+        // Split tasks by level and save to respective files
+        val projectTasks = cachedTasks.filter { it.isProjectLevel }
+        val userTasks = cachedTasks.filter { !it.isProjectLevel }
+
+        projectStorageFile?.let { file ->
+            val data = StorageData(
+                version = 1,
+                tasks = projectTasks.map { task ->
+                    TaskJson(
+                        id = task.id,
+                        title = task.title,
+                        description = task.description,
+                        status = task.status.name,
+                        createdAt = task.createdAt.toString(),
+                        updatedAt = task.updatedAt.toString(),
+                        isProjectLevel = task.isProjectLevel
+                    )
+                }
+            )
+            file.writeText(gson.toJson(data))
+        }
+
+        userStorageFile?.let { file ->
+            val data = StorageData(
+                version = 1,
+                tasks = userTasks.map { task ->
+                    TaskJson(
+                        id = task.id,
+                        title = task.title,
+                        description = task.description,
+                        status = task.status.name,
+                        createdAt = task.createdAt.toString(),
+                        updatedAt = task.updatedAt.toString(),
+                        isProjectLevel = task.isProjectLevel
+                    )
+                }
+            )
+            file.writeText(gson.toJson(data))
+        }
     }
 }

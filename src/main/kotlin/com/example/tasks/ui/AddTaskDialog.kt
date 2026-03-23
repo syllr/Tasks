@@ -7,14 +7,18 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextArea
 import com.intellij.ui.components.JBTextField
+import com.intellij.ui.components.Panel
 import java.awt.BorderLayout
 import java.awt.Dimension
+import java.awt.FlowLayout
 import java.time.Instant
 import java.util.UUID
 import javax.swing.BorderFactory
+import javax.swing.ButtonGroup
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
+import javax.swing.JRadioButton
 import javax.swing.JScrollPane
 
 class AddTaskDialog(
@@ -24,6 +28,8 @@ class AddTaskDialog(
 
     private lateinit var titleField: JBTextField
     private lateinit var descriptionArea: JBTextArea
+    private lateinit var projectLevelRadio: JRadioButton
+    private lateinit var userLevelRadio: JRadioButton
 
     init {
         title = if (existingTask == null) "添加新任务" else "编辑任务"
@@ -32,7 +38,7 @@ class AddTaskDialog(
 
     override fun createCenterPanel(): JComponent {
         val panel = JPanel(BorderLayout())
-        panel.preferredSize = Dimension(400, 250)
+        panel.preferredSize = Dimension(400, 300)
 
         // Title field
         val titlePanel = JPanel(BorderLayout())
@@ -53,6 +59,22 @@ class AddTaskDialog(
         descriptionPanel.add(scrollPane, BorderLayout.CENTER)
         panel.add(descriptionPanel, BorderLayout.CENTER)
 
+        // Storage level selection
+        val levelPanel = JPanel(FlowLayout(FlowLayout.LEFT))
+        levelPanel.border = BorderFactory.createEmptyBorder(8, 5, 8, 5)
+        levelPanel.add(JBLabel("存储位置:"))
+
+        projectLevelRadio = JRadioButton("项目级别（存在 .idea 目录)", existingTask?.isProjectLevel ?: true)
+        userLevelRadio = JRadioButton("用户级别（存在 ~/.todoTasks 目录)", existingTask?.isProjectLevel == false)
+
+        val buttonGroup = ButtonGroup()
+        buttonGroup.add(projectLevelRadio)
+        buttonGroup.add(userLevelRadio)
+
+        levelPanel.add(projectLevelRadio)
+        levelPanel.add(userLevelRadio)
+        panel.add(levelPanel, BorderLayout.SOUTH)
+
         // Pre-fill if editing
         existingTask?.let {
             titleField.text = it.title
@@ -64,6 +86,7 @@ class AddTaskDialog(
 
     fun getResult(): Task {
         val now = Instant.now()
+        val isProjectLevel = projectLevelRadio.isSelected
         return if (existingTask == null) {
             Task(
                 id = UUID.randomUUID().toString(),
@@ -71,13 +94,15 @@ class AddTaskDialog(
                 description = descriptionArea.text.trim(),
                 status = TaskStatus.TODO,
                 createdAt = now,
-                updatedAt = now
+                updatedAt = now,
+                isProjectLevel = isProjectLevel
             )
         } else {
             existingTask.copy(
                 title = titleField.text.trim(),
                 description = descriptionArea.text.trim(),
-                updatedAt = now
+                updatedAt = now,
+                isProjectLevel = isProjectLevel
             )
         }
     }

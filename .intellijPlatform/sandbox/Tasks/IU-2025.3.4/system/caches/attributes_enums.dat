@@ -1,0 +1,9 @@
+FsRecords.DIRECTORY_CHILDREN
+
+template_language
+sql_dialect
+GenericSQL
+AUTO_DETECTION_CACHE_ATTRIBUTE
+file.content.hash.forward.multi.index
+language_level_persistence
+kotlin-is-binary-compiled
