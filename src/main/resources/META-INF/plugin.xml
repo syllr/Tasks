@@ -1,0 +1,36 @@
+<idea-plugin>
+    <id>tasks</id>
+    <name>Tasks</name>
+    <version>1.0.0</version>
+    <vendor email="support@example.com" url="https://example.com">Example</vendor>
+
+    <description><![CDATA[
+        <h3>项目级任务管理</h3>
+        <p>在 IDE 中直接管理你的开发任务，每个项目独立存储。</p>
+        <h4>主要功能：</h4>
+        <ul>
+          <li>添加、编辑、删除任务</li>
+          <li>跟踪任务进度（待办/进行中/已完成）</li>
+          <li>数据存储在项目 .idea 目录下</li>
+          <li>简洁直观的界面</li>
+        </ul>
+    ]]></description>
+
+    <change-notes><![CDATA[
+        <p>1.0.0: 初始版本发布。</p>
+    ]]></change-notes>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow
+                id="Tasks"
+                secondary="false"
+                anchor="right"
+                factoryClass="com.example.tasks.ui.TasksToolWindowFactory"
+                icon="META-INF/pluginIcon.svg">
+            Tasks
+        </toolWindow>
+    </extensions>
+</idea-plugin>
