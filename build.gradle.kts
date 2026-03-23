@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm") version "2.1.20"
-    id("org.jetbrains.intellij.platform") version "2.3.0"
+    id("org.jetbrains.intellij.platform") version "2.13.1"
 }
 
 group = "com.yourname"
@@ -8,7 +8,6 @@ version = "1.0.0"
 
 repositories {
     mavenCentral()
-    google()
     intellijPlatform {
         defaultRepositories()
     }
@@ -17,12 +16,19 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     intellijPlatform {
-        intellijIdeaCommunity("2025.3")
+        intellijIdea("2025.3.4")
+    }
+}
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xjvm-default=all")
     }
 }
 
 intellijPlatform {
     pluginConfiguration {
+        id = "tasks"
         name = "Tasks"
         version = project.version.toString()
         description = "Task management tool for IntelliJ IDEA"
@@ -47,7 +53,6 @@ tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-            freeCompilerArgs.add("-Xjvm-default=all")
         }
     }
 }
