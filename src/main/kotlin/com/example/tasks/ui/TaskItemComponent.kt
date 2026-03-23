@@ -62,6 +62,8 @@ class TaskItemComponent(
         statusButton.background = getStatusColor()
         statusButton.foreground = JBColor.WHITE
         statusButton.preferredSize = Dimension(70, 28)
+        statusButton.isBorderPainted = false
+        statusButton.isFocusPainted = false
         statusButton.addActionListener {
             val newStatus = task.status.next()
             val updatedTask = task.copy(status = newStatus)
