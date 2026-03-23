@@ -1,8 +1,9 @@
 ### IntelliJ IDEA ###
 .idea/
 .gradle/
-out/
+.out/
 build/
+.intellijPlatform/
 !**/src/main/**/out/
 !**/src/test/**/out/
 .kotlin
