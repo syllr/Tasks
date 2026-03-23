@@ -5,12 +5,13 @@ import com.example.tasks.storage.TaskStorage
 import com.intellij.ui.components.JBBox
 import java.awt.Color
 import javax.swing.BorderFactory
+import javax.swing.BoxLayout
 import javax.swing.JPanel
 
 class TaskListPanel(
     private val storage: TaskStorage,
     private val onTaskChanged: () -> Unit
-) : JBBox(VERTICAL) {
+) : JBBox(BoxLayout.Y_AXIS) {
 
     private val tasks = mutableListOf<Task>()
 
@@ -58,7 +59,7 @@ class TaskListPanel(
     private fun createSeparator(): JPanel {
         val separator = JPanel()
         separator.background = Color(0x303030)
-        separator.height = 1
+        separator.preferredSize = java.awt.Dimension(0, 1)
         separator.alignmentX = CENTER_ALIGNMENT
         return separator
     }

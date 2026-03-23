@@ -4,7 +4,7 @@ import com.example.tasks.model.Task
 import com.example.tasks.storage.JsonTaskStorage
 import com.example.tasks.storage.TaskStorage
 import com.intellij.openapi.project.Project
-import com.intellij.ui.components JBBox
+import com.intellij.ui.components.JBBox
 import com.intellij.ui.components.JBScrollPane
 import java.awt.BorderLayout
 import java.awt.Dimension

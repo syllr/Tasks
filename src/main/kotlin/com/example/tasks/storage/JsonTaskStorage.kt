@@ -43,7 +43,8 @@ class JsonTaskStorage(private val project: Project) : TaskStorage {
     }
 
     override fun loadTasks(): List<Task> {
-        if (!storageFile.exists()) {
+        cachedTasks = mutableListOf()
+        if (storageFile.exists()) {
             try {
                 val json = storageFile.readText()
                 val data = gson.fromJson(json, StorageData::class.java)
@@ -60,8 +61,6 @@ class JsonTaskStorage(private val project: Project) : TaskStorage {
             } catch (e: Exception) {
                 cachedTasks = mutableListOf()
             }
-        } else {
-            cachedTasks = mutableListOf()
         }
         return cachedTasks.toList()
     }

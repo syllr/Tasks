@@ -15,6 +15,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation("com.google.code.gson:gson:2.10.1")
     intellijPlatform {
         intellijIdea("2025.3.4")
     }

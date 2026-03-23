@@ -11,6 +11,7 @@ import java.awt.BorderLayout
 import java.awt.Dimension
 import java.time.Instant
 import java.util.UUID
+import javax.swing.BorderFactory
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -81,7 +82,7 @@ class AddTaskDialog(
         }
     }
 
-    override fun getInitialFocus(): JComponent {
+    override fun getPreferredFocusedComponent(): JComponent {
         return titleField
     }
 }

@@ -50,7 +50,7 @@ class TaskItemComponent(
 
         if (!task.description.isNullOrBlank()) {
             val descriptionLabel = JLabel(task.description)
-            descriptionLabel.font = descriptionLabel.font.deriveFont(Font.SMALL)
+            descriptionLabel.font = descriptionLabel.font.deriveFont(Font.PLAIN, 11f)
             descriptionLabel.foreground = JBColor.GRAY
             textPanel.add(descriptionLabel, BorderLayout.CENTER)
         }
