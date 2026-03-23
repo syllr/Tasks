@@ -3,12 +3,12 @@ package com.example.tasks.ui
 import com.example.tasks.model.Task
 import com.example.tasks.model.TaskStatus
 import com.intellij.ui.JBColor
+import com.intellij.ui.components.JBBox
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.Font
 import javax.swing.BorderFactory
-import javax.swing.Box
 import javax.swing.BoxLayout
 import javax.swing.JButton
 import javax.swing.JLabel
@@ -22,28 +22,16 @@ class TaskItemComponent(
 ) : JPanel(BorderLayout()) {
 
     init {
-        preferredSize = Dimension(0, 60)
-        minimumSize = Dimension(0, 60)
-        maximumSize = Dimension(Int.MAX_VALUE, 60)
+        preferredSize = Dimension(0, 70)
+        minimumSize = Dimension(0, 70)
+        maximumSize = Dimension(Int.MAX_VALUE, 70)
         border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
         // Round border
         background = com.intellij.ui.JBColor.PanelBackground
 
-        // Status button
-        val statusButton = JButton(getStatusText())
-        statusButton.background = getStatusColor()
-        statusButton.foreground = JBColor.WHITE
-        statusButton.preferredSize = Dimension(80, 48)
-        statusButton.addActionListener {
-            val newStatus = task.status.next()
-            val updatedTask = task.copy(status = newStatus)
-            onStatusChange(updatedTask)
-        }
-        add(statusButton, BorderLayout.WEST)
-
-        // Title and description
+        // Left: title and description
         val textPanel = JPanel(BorderLayout())
-        textPanel.border = BorderFactory.createEmptyBorder(0, 8, 0, 8)
+        textPanel.border = BorderFactory.createEmptyBorder(4, 8, 4, 8)
 
         val titleText = buildString {
             append(task.title)
@@ -68,33 +56,45 @@ class TaskItemComponent(
 
         add(textPanel, BorderLayout.CENTER)
 
-        // Action buttons (edit and delete) - vertically centered using standard Box
-        val actionsPanel = Box(BoxLayout.Y_AXIS)
-        actionsPanel.add(Box.createVerticalGlue())
-        val buttonPanel = JPanel(FlowLayout(FlowLayout.RIGHT, 4, 0))
+        // Right: status button + edit + delete - all horizontal
+        val buttonsPanel = JPanel(FlowLayout(FlowLayout.CENTER, 4, 0))
+        val statusButton = JButton(getStatusText())
+        statusButton.background = getStatusColor()
+        statusButton.foreground = JBColor.WHITE
+        statusButton.preferredSize = Dimension(70, 28)
+        statusButton.addActionListener {
+            val newStatus = task.status.next()
+            val updatedTask = task.copy(status = newStatus)
+            onStatusChange(updatedTask)
+        }
+        buttonsPanel.add(statusButton)
+
         val editButton = JButton("编辑")
         editButton.preferredSize = Dimension(50, 28)
         editButton.toolTipText = "编辑任务"
         editButton.addActionListener { onEdit(task) }
-        buttonPanel.add(editButton)
+        buttonsPanel.add(editButton)
 
         val deleteButton = JButton("删除")
         deleteButton.preferredSize = Dimension(50, 28)
         deleteButton.toolTipText = "删除任务"
         deleteButton.addActionListener { onDelete(task) }
-        buttonPanel.add(deleteButton)
+        buttonsPanel.add(deleteButton)
 
-        actionsPanel.add(buttonPanel)
-        actionsPanel.add(Box.createVerticalGlue())
-        actionsPanel.preferredSize = Dimension(110, 0)
-        add(actionsPanel, BorderLayout.EAST)
+        // Vertical center the whole buttons panel
+        val buttonsBox = JBBox(BoxLayout.Y_AXIS)
+        buttonsBox.add(JBBox.createVerticalGlue())
+        buttonsBox.add(buttonsPanel)
+        buttonsBox.add(JBBox.createVerticalGlue())
+        buttonsBox.preferredSize = Dimension(190, 0)
+        add(buttonsBox, BorderLayout.EAST)
     }
 
     private fun getStatusText(): String {
         return when (task.status) {
             TaskStatus.TODO -> task.status.displayName
             TaskStatus.IN_PROGRESS -> task.status.displayName
-            TaskStatus.DONE -> task.status.displayName
+            TaskStatus.DONE -> "完成"
         }
     }
 
