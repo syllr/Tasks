@@ -41,6 +41,9 @@ class TaskListPanel(
         tasks.clear()
         tasks.addAll(storage.loadTasks())
 
+        // Sort by created time descending: newest tasks first at top
+        tasks.sortByDescending { it.createdAt }
+
         // Top bar: left filter comboBox + right statistics
         add(createTopBar())
 
