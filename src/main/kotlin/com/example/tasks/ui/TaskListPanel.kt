@@ -112,10 +112,6 @@ class TaskListPanel(
         val leftCell = JPanel(BorderLayout())
         leftCell.background = JBColor.PanelBackground
 
-        // Use nested BorderLayout to guarantee vertical centering for single row
-        val leftContainer = JPanel(BorderLayout())
-        leftContainer.background = JBColor.PanelBackground
-
         val leftContent = JPanel(FlowLayout(FlowLayout.CENTER, 5, 0))
         leftContent.background = JBColor.PanelBackground
         leftContent.add(JLabel("筛选: "))
@@ -129,8 +125,7 @@ class TaskListPanel(
         }
         leftContent.add(comboBox)
 
-        leftContainer.add(leftContent, BorderLayout.CENTER)
-        leftCell.add(leftContainer, BorderLayout.CENTER)
+        leftCell.add(leftContent, BorderLayout.CENTER)
         panel.add(leftCell)
 
         // Right cell: statistics - content centered both horizontally and vertically
