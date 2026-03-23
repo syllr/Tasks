@@ -1,24 +1,40 @@
 plugins {
-    kotlin("jvm") version "2.1.0"
-    id("org.jetbrains.intellij") version "2.1.0"
+    kotlin("jvm") version "2.1.20"
+    id("org.jetbrains.intellij.platform") version "2.3.0"
 }
 
-group = "com.example"
+group = "com.yourname"
 version = "1.0.0"
 
 repositories {
     mavenCentral()
     google()
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
+    intellijPlatform {
+        intellijIdeaCommunity("2025.3")
+    }
 }
 
-intellij {
-    version.set("2025.3")
-    type.set("IC") // IC = Community Edition, IU = Ultimate
-    plugins.set(listOf())
+intellijPlatform {
+    pluginConfiguration {
+        name = "Tasks"
+        version = project.version.toString()
+        description = "Task management tool for IntelliJ IDEA"
+        vendor {
+            name = "Your Name"
+        }
+
+        ideaVersion {
+            sinceBuild = "253"
+            untilBuild = "263.*"
+        }
+    }
 }
 
 tasks {
@@ -29,12 +45,9 @@ tasks {
     }
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
-        kotlinOptions.freeCompilerArgs += listOf("-Xjvm-default=all")
-    }
-
-    patchPluginXml {
-        sinceBuild.set("253")
-        untilBuild.set("263.*")
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+            freeCompilerArgs.add("-Xjvm-default=all")
+        }
     }
 }
