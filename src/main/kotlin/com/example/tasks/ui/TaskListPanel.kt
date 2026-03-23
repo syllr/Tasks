@@ -116,7 +116,7 @@ class TaskListPanel(
         // 外层面板：分成 1行2列，水平间距 10px
         // GridLayout 强制两个格子宽度、高度完全相等
         val panel = JPanel(java.awt.GridLayout(1, 2, 10, 0))
-        panel.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
+        panel.border = BorderFactory.createEmptyBorder(1, 8, 1, 8)  // 减小上下内边距
         panel.background = JBColor.PanelBackground
 
         // ========== 左边格子：状态筛选下拉框 ==========
