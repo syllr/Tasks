@@ -35,3 +35,6 @@ bin/
 
 ### Claude ###
 .claude/
+
+### Plugin signing certificates ###
+cert/

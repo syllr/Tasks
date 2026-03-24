@@ -5,6 +5,7 @@ plugins {
 
 group = "com.shenyuanlaolarou"
 version = "1.0.0"
+description = "Task management tool directly inside IntelliJ IDEA. Manage your to-do tasks, track progress, and organize your work without leaving the IDE. Supports both project-level and global user-level tasks."
 
 repositories {
     mavenCentral()
@@ -29,10 +30,10 @@ kotlin {
 
 intellijPlatform {
     pluginConfiguration {
-        id = "tasks"
-        name = "Tasks"
+        id = "TodoTasks"
+        name = "TodoTasks"
         version = project.version.toString()
-        description = "Task management tool for IntelliJ IDEA"
+        description = "Task management tool directly inside IntelliJ IDEA. Manage your to-do tasks, track progress, and organize your work without leaving the IDE. Supports both project-level and global user-level tasks."
         vendor {
             name = "shenyuanlaolarou"
         }
@@ -41,6 +42,18 @@ intellijPlatform {
             sinceBuild = "253"
             untilBuild = "263.*"
         }
+    }
+
+    signing {
+        privateKeyFile = file("cert/private-key.pem")
+        certificateChainFile = file("cert/certificate.pem")
+        // Password is optional for self-signed certificate, can be empty
+        password.set("")
+    }
+
+    publishing {
+        // Token will be provided via environment variable
+        token = providers.environmentVariable("ORG_GRADLE_PROJECT_intellijPlatformPublishingToken")
     }
 }
 
